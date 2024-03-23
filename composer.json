@@ -4,7 +4,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Mekadalibrahem\\Toolkit\\": "src/"
+            "Mekadalibrahem\\Toolkit\\": "src/" ,
+            "Mekadalibrahem\\Toolkit\\Tests\\" : "test/"
         }
     },
     "authors": [
@@ -14,7 +15,8 @@
         }
     ],
     "require-dev": {
-        "orchestra/testbench": "^9.0"
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^10.0"
     },
     "extra" : {
         "laravel" : {
