@@ -16,6 +16,13 @@
     "require-dev": {
         "orchestra/testbench": "^9.0"
     },
+    "extra" : {
+        "laravel" : {
+            "providers" :[
+                "Mekadalibrahem\\Toolkit\\ToolkitServiceProvider" 
+            ]
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
