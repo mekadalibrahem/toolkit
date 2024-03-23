@@ -1,0 +1,21 @@
+{
+    "name": "mekadalibrahem/toolkit",
+    "description": "package provides a wide range of functionalities that are essential for various laravel projects",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Mekadalibrahem\\Toolkit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "MekadAlIibrahem",
+            "email": "mekadalibrahem123@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "orchestra/testbench": "^9.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
