@@ -16,10 +16,10 @@ class InstallCommand extends Command  implements PromptsForMissingInput
 
     public function handel() 
     {
-        if ($this->argument('stack') === 'blade') {
+        if ($this->argument('stack') === 'abstarct') {
             return $this->installAbstarctStack() ;
         }
-        $this->components->error('Invalid stack. Supported stacks are [blade]');
+        $this->components->error('Invalid stack. Supported stacks are [abstarct]');
 
         return 1;
     }
