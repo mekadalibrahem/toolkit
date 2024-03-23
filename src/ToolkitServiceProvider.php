@@ -14,7 +14,13 @@ class ToolkitServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        //
+        if (! $this->app->runningInConsole()) {
+            return;
+        }
+
+        $this->commands([
+            Console\InstallCommand::class,
+        ]);
     }
 
     
