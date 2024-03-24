@@ -5,7 +5,7 @@
     "autoload": {
         "psr-4": {
             "Mekadalibrahem\\Toolkit\\": "src/" ,
-            "Mekadalibrahem\\Toolkit\\Tests\\" : "test/"
+            "Mekadalibrahem\\Toolkit\\Tests\\" : "tests/"
         }
     },
     "authors": [
@@ -25,6 +25,9 @@
             ]
         }
     },
+    "scripts": { 
+        "test": "vendor/bin/phpunit"
+     },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
