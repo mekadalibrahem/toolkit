@@ -15,7 +15,7 @@ class InstallBladeStackTest extends TestCase
 
         $this->assertTrue(File::exists(app_path('Http/Controllers/Auth')));
         $this->assertTrue(File::exists(app_path('Http/Requests/Auth')));
-        $this->assertTrue(File::exists(app_path('Http/Views/Components/Alert/alert.php')));
+        $this->assertTrue(File::exists(app_path('View/Components/Alert/alert.php')));
         $this->assertTrue(File::exists(base_path('tailwind.config.js')));
         $this->assertTrue(File::exists(base_path('postcss.config.js')));
         $this->assertTrue(File::exists(base_path('vite.config.js')));
