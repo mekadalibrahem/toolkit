@@ -41,8 +41,8 @@ trait InstallBladeStack
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/app/View/Components', app_path('View/Components'));
 
         // Routes...
-        copy(__DIR__.'/../../stubs/default/routes/web.php', base_path('routes/web.php'));
-        copy(__DIR__.'/../../stubs/default/routes/auth.php', base_path('routes/auth.php'));
+        copy(__DIR__.'/../../stubs/blade/routes/web.php', base_path('routes/web.php'));
+        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/routes/web', base_path('routes'));
 
         // Tailwind / Vite...
         copy(__DIR__.'/../../stubs/blade/tailwind.config.js', base_path('tailwind.config.js'));
