@@ -5,6 +5,8 @@ namespace Mekadalibrahem\Toolkit\Console ;
 use Illuminate\Console\Command ;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
+use RuntimeException;
+use Symfony\Component\Process\Process;
 
 use function Laravel\Prompts\select;
 
@@ -19,6 +21,7 @@ class InstallCommand extends Command  implements PromptsForMissingInput
 
     public function handle() 
     {
+        $this->info('start install tool kit ');
         if ($this->argument('stack') === 'abstract') {
             return $this->installAbstarctStack() ;
         }
@@ -94,6 +97,30 @@ class InstallCommand extends Command  implements PromptsForMissingInput
             $files->delete(base_path('package-lock.json'));
         });
     }
+
+      /**
+     * Run the given commands.
+     *
+     * @param  array  $commands
+     * @return void
+     */
+    protected function runCommands($commands)
+    {
+        $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
+
+        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
+            try {
+                $process->setTty(true);
+            } catch (RuntimeException $e) {
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
+            }
+        }
+
+        $process->run(function ($type, $line) {
+            $this->output->write('    '.$line);
+        });
+    }
+
 
 
 }
