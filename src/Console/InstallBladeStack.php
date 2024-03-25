@@ -24,6 +24,9 @@ trait InstallBladeStack
                 'flowbite' => '^2.3.0' ,
             ] + $packages;
         });
+
+        //images  
+        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/public/images' , base_path('public/images'));
         // Requests
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Requests'));
         (new Filesystem)->copyDirectory(__DIR__ ."/../../stubs/blade/app/Http/Requests",app_path('Http/Requests'));

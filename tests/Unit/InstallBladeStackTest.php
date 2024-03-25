@@ -12,7 +12,7 @@ class InstallBladeStackTest extends TestCase
             Artisan::call('toolkit:install blade') 
             ,0
         );
-
+        $this->assertTrue(File::exists(base_path('public/images/toolkit_logo_dark.png')));
         $this->assertTrue(File::exists(app_path('Http/Controllers/Auth')));
         $this->assertTrue(File::exists(app_path('Http/Requests/Auth')));
         $this->assertTrue(File::exists(app_path('View/Components/Alert/alert.php')));
@@ -23,6 +23,7 @@ class InstallBladeStackTest extends TestCase
         $this->assertTrue(File::exists(resource_path('js/app.js')));
        
     }
+
 }
 
 
