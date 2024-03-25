@@ -19,7 +19,7 @@
                         @csrf
                         <div>
                             <x-form.label for="email" value="email" />
-                            <x-form.input type="text" name="email" id="email" required=""/>
+                            <x-form.input type="email" name="email" id="email" required=""/>
                             <x-form.input-error  :message="$errors->get('email')" />
                         </div>
                         <div>
@@ -43,7 +43,7 @@
                         </div>
                         <x-button.primary type="submit">Sign in</x-button.primary>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-                            Don’t have an account yet? <a href="#" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
+                            Don’t have an account yet? <a href="{{ route('register') }}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
                         </p>
                     </form>
                 </div>
