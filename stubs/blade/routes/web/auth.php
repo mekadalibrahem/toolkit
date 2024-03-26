@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisterUserControlelr;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\SendResetPasswordLinkController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route ;
@@ -14,6 +17,20 @@ Route::middleware('guest')->group(function(){
 
     Route::get('/login' , [AuthenticatedSessionController::class , 'create'])->name('login');
     Route::get('/login_handler' , [AuthenticatedSessionController::class , 'store'])->name('login_handler');
+
+    // start reste password
+
+    Route::name('password.')->group(function(){
+        Route::get('/forgot-password' , [SendResetPasswordLinkController::class , 'create'])->name('request');
+        Route::post('/forgot-password', [SendResetPasswordLinkController::class , 'store'])->name('email');
+        Route::get('/reset-password/{token}',[ResetPasswordController::class , 'create'])->name('reset');
+        Route::post('/reset-password' , [ResetPasswordController::class , 'update'])->name('update');
+    });
+
+
+    // end reste password
+
+
 });
 
 
@@ -50,4 +67,15 @@ Route::middleware('auth' )->group(function(){
 });
 
 
+Route::middleware([
+    'auth' , 'verified'
+])->group(function(){
+
+    Route::name('profile.')->group(function(){
+        Route::get('/profile' , [ProfileController::class , 'create'])->name('create');
+        Route::post('/profile' , [ProfileController::class , 'update'])->name('update');
+        Route::delete('/profile' , [ ProfileController::class , 'destroy' ])->name('destroy');
+        Route::post('/change-password' , [ProfileController::class , 'change_password'])->name('change-password');
+    });
+});
 

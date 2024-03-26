@@ -9,3 +9,4 @@
 - login user
 - verify email
 - profile control
+- forgot  and reset password control
