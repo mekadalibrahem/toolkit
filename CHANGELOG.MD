@@ -1,4 +1,4 @@
-# v1.3.0 Beta 
+# v1.3.0 
 
 ## options : 
 1. Abstract : just controlelr and request ..
