@@ -21,6 +21,7 @@ class InstallBladeStackTest extends TestCase
         $this->assertTrue(File::exists(base_path('vite.config.js')));
         $this->assertTrue(File::exists(resource_path('css/app.css')));
         $this->assertTrue(File::exists(resource_path('js/app.js')));
+        $this->assertTrue(File::exists(app_path('Models/User.php')));
        
     }
 

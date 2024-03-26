@@ -35,6 +35,11 @@ trait InstallBladeStack
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Controllers'));
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/app/Http/Controllers', app_path('Http/Controllers'));
 
+        // Models 
+
+        (new Filesystem)->ensureDirectoryExists(app_path('Models'));
+        (new Filesystem)->copy(__DIR__.'/../../stubs/blade/app/Models/User.php' , app_path('Models/User.php'));
+
         // Views...
         (new Filesystem)->ensureDirectoryExists(resource_path('views'));
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/resources/views', resource_path('views'));
