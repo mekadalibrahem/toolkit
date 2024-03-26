@@ -44,8 +44,8 @@ class InstallCommand extends Command  implements PromptsForMissingInput
             'stack' => fn () => select(
                 label: 'Which toolkit stack would you like to install?',
                 options: [
-                    'abstract' => 'with  out view or GUI' ,
-                    'blade' => 'woth ... Route , view (tailwindcss and flowbit lib )   '
+                    'abstract' => 'abstract... provide controllers , requests and other without front end sections or routes' ,
+                    'blade' => 'blade... provide controllers .. Route , views (tailwindcss and flowbit lib ) sampile GUI'
                 ],
                 scroll: 2,
             ),
