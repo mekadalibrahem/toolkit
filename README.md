@@ -2,7 +2,14 @@
 package provides a wide range of functionalities that are essential for various laravel projects
 
 ## download 
-<code> composer require mekadalibrahem/toolkit </code>
+1. donwload package :
+    ```php 
+     composer require mekadalibrahem/toolkit
+    ```
+- install package : 
+    ```php 
+        php artisan toolkit:install
+    ```
 
 ## Enable Verify Email
 1. verify that your <code>App\Models\User </code> model implements the <code>Illuminate\Contracts\Auth\MustVerifyEmail </code> contract:
