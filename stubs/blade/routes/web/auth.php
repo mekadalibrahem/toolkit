@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function(){
 
 
 
-Route::middleware('auth' )->group(function(){
+Route::middleware(['auth' , 'auth.session' ] )->group(function(){
     Route::get('/logout' , [AuthenticatedSessionController::class , 'destroy'])->name('logout_handler');
 
     // start verify email
@@ -64,11 +64,13 @@ Route::middleware('auth' )->group(function(){
     Route::middleware('verified')->group(function () {
         Route::view('/dashboard' , 'user.dashboard')->name('dashboard');
     });
+
+
 });
 
 
 Route::middleware([
-    'auth' , 'verified'
+    'auth' , 'verified' , 'auth.session'
 ])->group(function(){
 
     Route::name('profile.')->group(function(){
@@ -77,5 +79,7 @@ Route::middleware([
         Route::delete('/profile' , [ ProfileController::class , 'destroy' ])->name('destroy');
         Route::post('/change-password' , [ProfileController::class , 'change_password'])->name('change-password');
     });
+    Route::post('/logout_form_other_device' , [ProfileController::class , 'logOutFromOtherDevice'])
+    ->name('logout_other');
 });
 

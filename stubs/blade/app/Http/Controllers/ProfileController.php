@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
+use Jenssegers\Agent\Agent;
 
 class ProfileController extends Controller
 {
@@ -19,8 +21,11 @@ class ProfileController extends Controller
     public function create(Request $request)
     {
         $user = $request->user();
+
+
         return view('user.profile' , [
-            'user' => $user
+            'user' => $user ,
+            'sessions' => $this->sessions( $request)
         ]);
     }
 
@@ -53,6 +58,8 @@ class ProfileController extends Controller
 
 
     }
+
+
     /**
      * change password
      */
@@ -92,5 +99,57 @@ class ProfileController extends Controller
         }else{
             return redirect()->route('profile.create')->with('status' , 'error-password');
         }
+    }
+
+    /**
+     * log out form other devices
+     */
+    public function logOutFromOtherDevice(Request $request){
+        // $user = $request->user()->logoutOtherDevices();
+        Auth::logoutOtherDevices($request->password_logout);
+
+
+        return redirect()->route('profile.create');
+    }
+
+
+    /**
+     * Get the current sessions.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Support\Collection
+     */
+    public function sessions(Request $request)
+    {
+        if (config('session.driver') !== 'database') {
+            return collect();
+        }
+
+        return collect(
+            DB::connection(config('session.connection'))->table(config('session.table', 'sessions'))
+                    ->where('user_id', $request->user()->getAuthIdentifier())
+                    ->orderBy('last_activity', 'desc')
+                    ->get()
+        )->map(function ($session) use ($request) {
+            $agent = $this->createAgent($session);
+
+            return (object) [
+                'agent' => $agent ,
+                'ip_address' => $session->ip_address,
+                'is_current_device' => $session->id === $request->session()->getId(),
+                'last_active' => Carbon::createFromTimestamp($session->last_activity)->diffForHumans(),
+            ];
+        });
+    }
+
+    /**
+     * Create a new agent instance from the given session.
+     *
+     * @param  mixed  $session
+     * @return \Laravel\Jetstream\Agent
+     */
+    protected function createAgent($session)
+    {
+        return tap(new Agent(), fn ($agent) => $agent->setUserAgent($session->user_agent));
     }
 }
