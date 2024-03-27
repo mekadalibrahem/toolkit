@@ -16,8 +16,8 @@
     ],
     "require": {
         "php": "^8.2",
-        "jenssegers/agent": "^2.6",
-        "laravel/framework": "^10.0"
+        "jenssegers/agent": "^2.6"
+        
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
