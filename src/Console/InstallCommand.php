@@ -6,6 +6,7 @@ use Illuminate\Console\Command ;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 use function Laravel\Prompts\select;
@@ -15,7 +16,9 @@ class InstallCommand extends Command  implements PromptsForMissingInput
     use InstallAbstractStack ; use InstallBladeStack ;
 
 
-    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade)}" ;
+    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade)}
+                    {--composer=global : Absolute path to the Composer binary which should be used to install packages}'";
+    
 
     protected $description = "Install the Tool kit package" ;
 
@@ -29,9 +32,102 @@ class InstallCommand extends Command  implements PromptsForMissingInput
             return $this->installBladeStack();
         }
         $this->components->error('Invalid stack. Supported stacks are [abstract , blade]');
-
+        
         return 1;
     }
+
+      /**
+     * Determine if the given Composer package is installed.
+     *
+     * @param  string  $package
+     * @return bool
+     */
+    protected function hasComposerPackage($package)
+    {
+        $packages = json_decode(file_get_contents(base_path('composer.json')), true);
+
+        return array_key_exists($package, $packages['require'] ?? [])
+            || array_key_exists($package, $packages['require-dev'] ?? []);
+    }
+
+    /**
+     * Installs the given Composer Packages into the application.
+     *
+     * @param  mixed  $packages
+     * @return bool
+     */
+    protected function requireComposerPackages($packages)
+    {
+        $composer = $this->option('composer');
+
+        if ($composer !== 'global') {
+            $command = [$this->phpBinary(), $composer, 'require'];
+        }
+
+        $command = array_merge(
+            $command ?? ['composer', 'require'],
+            is_array($packages) ? $packages : func_get_args()
+        );
+
+        return ! (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
+            ->setTimeout(null)
+            ->run(function ($type, $output) {
+                $this->output->write($output);
+            });
+    }
+
+    /**
+     * Removes the given Composer Packages as "dev" dependencies.
+     *
+     * @param  mixed  $packages
+     * @return bool
+     */
+    protected function removeComposerDevPackages($packages)
+    {
+        $composer = $this->option('composer');
+
+        if ($composer !== 'global') {
+            $command = [$this->phpBinary(), $composer, 'remove', '--dev'];
+        }
+
+        $command = array_merge(
+            $command ?? ['composer', 'remove', '--dev'],
+            is_array($packages) ? $packages : func_get_args()
+        );
+
+        return (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
+            ->setTimeout(null)
+            ->run(function ($type, $output) {
+                $this->output->write($output);
+            }) === 0;
+    }
+
+    /**
+     * Install the given Composer Packages as "dev" dependencies.
+     *
+     * @param  mixed  $packages
+     * @return bool
+     */
+    protected function requireComposerDevPackages($packages)
+    {
+        $composer = $this->option('composer');
+
+        if ($composer !== 'global') {
+            $command = [$this->phpBinary(), $composer, 'require', '--dev'];
+        }
+
+        $command = array_merge(
+            $command ?? ['composer', 'require', '--dev'],
+            is_array($packages) ? $packages : func_get_args()
+        );
+
+        return (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
+            ->setTimeout(null)
+            ->run(function ($type, $output) {
+                $this->output->write($output);
+            }) === 0;
+    }
+
 
     /**
      * Prompt for missing input arguments using the returned questions.
@@ -121,6 +217,17 @@ class InstallCommand extends Command  implements PromptsForMissingInput
         });
     }
 
+
+
+        /**
+     * Get the path to the appropriate PHP binary.
+     *
+     * @return string
+     */
+    protected function phpBinary()
+    {
+        return (new PhpExecutableFinder())->find(false) ?: 'php';
+    }
 
 
 }

@@ -4,7 +4,7 @@ namespace Mekadalibrahem\Toolkit\Console ;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-
+use Illuminate\Support\ServiceProvider;
 trait InstallBladeStack 
 {
 
@@ -14,7 +14,10 @@ trait InstallBladeStack
      */
     public function installBladeStack()
     {
-
+        $this->components->info('Start install Blade stack '); 
+        $this->components->info('Start install required composer packages '); 
+        $this->requireComposerPackages(["jenssegers/agent:^2.6"]);
+        $this->components->info('End install required composer packages '); 
          // NPM Packages...
          $this->updateNodePackages(function ($packages) {
             return [
@@ -24,7 +27,7 @@ trait InstallBladeStack
                 'flowbite' => '^2.3.0' ,
             ] + $packages;
         });
-
+        $this->components->info('Start Extracting files .... '); 
         //images  
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/public/images' , base_path('public/images'));
         // Requests
@@ -53,7 +56,9 @@ trait InstallBladeStack
         copy(__DIR__.'/../../stubs/blade/vite.config.js', base_path('vite.config.js'));
         copy(__DIR__.'/../../stubs/blade/resources/css/app.css', resource_path('css/app.css'));
         copy(__DIR__.'/../../stubs/blade/resources/js/app.js', resource_path('js/app.js'));
-
+        ServiceProvider::addProviderToBootstrapFile('Jenssegers\Agent\AgentServiceProvider');
+     
+        $this->components->info('End Extracting files  '); 
         $this->components->info('Installing and building Node dependencies.');
 
         if (file_exists(base_path('pnpm-lock.yaml'))) {
@@ -63,7 +68,9 @@ trait InstallBladeStack
         } else {
             $this->runCommands(['npm install', 'npm run build']);
         }
-    
+
+
+       
         $this->line('');
         $this->components->info('toolkit  installed successfully.');
     }
