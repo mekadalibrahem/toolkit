@@ -6,7 +6,7 @@ package provides a wide range of functionalities that are essential for various 
     ```php 
      composer require mekadalibrahem/toolkit
     ```
-- install package : 
+2. install package : 
     ```php 
         php artisan toolkit:install
     ```
