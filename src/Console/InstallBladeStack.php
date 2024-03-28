@@ -1,25 +1,34 @@
-<?php 
+<?php
 
 namespace Mekadalibrahem\Toolkit\Console ;
 
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Illuminate\Support\ServiceProvider;
-trait InstallBladeStack 
+use Illuminate\Support\Facades\Artisan;
+
+trait InstallBladeStack
 {
 
-    
+
     /**
-     * install balde  stack 
+     * install balde  stack
      */
     public function installBladeStack()
     {
-        $this->components->info('Start install Blade stack '); 
-        $this->components->info('Start install required composer packages '); 
+        $this->components->info('Start install Blade stack ');
+        $this->components->info('Start install required composer packages ');
         $this->requireComposerPackages(["jenssegers/agent:^2.6"]);
-        $this->components->info('End install required composer packages '); 
-         // NPM Packages...
-         $this->updateNodePackages(function ($packages) {
+        $this->components->info('End install required composer packages ');
+
+
+        $this->installServiceProviderAfter('RouteServiceProvider' , 'Jenssegers\Agent\AgentServiceProvider');
+         // Configure Session...
+         $this->configureSession();
+
+
+
+
+        // NPM Packages...
+        $this->updateNodePackages(function ($packages) {
             return [
                 'autoprefixer' => '^10.4.18',
                 'postcss' => '^8.4.35',
@@ -27,8 +36,8 @@ trait InstallBladeStack
                 'flowbite' => '^2.3.0' ,
             ] + $packages;
         });
-        $this->components->info('Start Extracting files .... '); 
-        //images  
+        $this->components->info('Start Extracting files .... ');
+        //images
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/blade/public/images' , base_path('public/images'));
         // Requests
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Requests'));
@@ -56,9 +65,16 @@ trait InstallBladeStack
         copy(__DIR__.'/../../stubs/blade/vite.config.js', base_path('vite.config.js'));
         copy(__DIR__.'/../../stubs/blade/resources/css/app.css', resource_path('css/app.css'));
         copy(__DIR__.'/../../stubs/blade/resources/js/app.js', resource_path('js/app.js'));
-        ServiceProvider::addProviderToBootstrapFile('Jenssegers\Agent\AgentServiceProvider');
-     
-        $this->components->info('End Extracting files  '); 
+
+
+        $this->components->info('End Extracting files  ');
+        try {
+            $this->components->info('migration database ');
+            Artisan::call('migrate');
+        }catch(\Throwable $th) {
+            $this->components->info('Error Migration  : '. $th );
+        }
+
         $this->components->info('Installing and building Node dependencies.');
 
         if (file_exists(base_path('pnpm-lock.yaml'))) {
@@ -70,10 +86,10 @@ trait InstallBladeStack
         }
 
 
-       
+
         $this->line('');
         $this->components->info('toolkit  installed successfully.');
     }
 
-   
+
 }
