@@ -10,7 +10,10 @@ package provides a wide range of functionalities that are essential for various 
     ```php 
         php artisan toolkit:install
     ```
-
+3. update your database tables
+   ```php
+       php artisan migrate
+   ```
 ## Enable Verify Email
 1. verify that your <code>App\Models\User </code> model implements the <code>Illuminate\Contracts\Auth\MustVerifyEmail </code> contract:
 ```php
