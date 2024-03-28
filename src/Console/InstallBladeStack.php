@@ -68,12 +68,7 @@ trait InstallBladeStack
 
 
         $this->components->info('End Extracting files  ');
-        try {
-            $this->components->info('migration database ');
-            Artisan::call('migrate');
-        }catch(\Throwable $th) {
-            $this->components->info('Error Migration  : '. $th );
-        }
+       
 
         $this->components->info('Installing and building Node dependencies.');
 
