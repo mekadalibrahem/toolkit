@@ -6,6 +6,10 @@ package provides a wide range of functionalities that are essential for various 
     ```php 
      composer require mekadalibrahem/toolkit
     ```
+- for laravel 10 download version ^1
+  ``` php
+      composer require mekadalibrahem/toolkit=^1
+  ``` 
 2. install package : 
     ```php 
         php artisan toolkit:install
