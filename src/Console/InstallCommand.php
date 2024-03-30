@@ -14,10 +14,11 @@ use function Laravel\Prompts\select;
 
 class InstallCommand extends Command  implements PromptsForMissingInput
 {
-    use InstallAbstractStack ; use InstallBladeStack ;
+    use InstallAbstractStack ; use InstallBladeStack ; 
+    use InstallLivewireStack;
 
 
-    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade)}
+    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade , livewire)}
                     {--composer=global : Absolute path to the Composer binary which should be used to install packages}'";
 
 
@@ -31,6 +32,9 @@ class InstallCommand extends Command  implements PromptsForMissingInput
         }
         if ($this->argument('stack') === 'blade'){
             return $this->installBladeStack();
+        }
+        if($this->argument('stack') === 'livewire'){
+            return $this->installLivewireStack() ;
         }
         $this->components->error('Invalid stack. Supported stacks are [abstract , blade]');
 
@@ -142,9 +146,10 @@ class InstallCommand extends Command  implements PromptsForMissingInput
                 label: 'Which toolkit stack would you like to install?',
                 options: [
                     'abstract' => 'abstract... provide controllers , requests and other without front end sections or routes' ,
-                    'blade' => 'blade... provide controllers .. Route , views (tailwindcss and flowbit lib ) sampile GUI'
+                    'blade' => 'blade... provide controllers .. Route , views (tailwindcss and flowbit lib ) sampile GUI' ,
+                    'livewire' => 'livewire ... provide controller ... Route , view  and livewire components'
                 ],
-                scroll: 2,
+                scroll: 3,
             ),
         ];
     }
