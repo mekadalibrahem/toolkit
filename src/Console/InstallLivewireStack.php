@@ -3,17 +3,19 @@
 namespace Mekadalibrahem\Toolkit\Console ;
 
 use Illuminate\Filesystem\Filesystem;
-
+use Mekadalibrahem\Toolkit\Tests\Unit\InstallLivewireStackTest;
 
 trait InstallLivewireStack
 {
 
-    public const STUBS = __DIR__."/../../stubs/livewire";
+   
     /**
      * install balde  stack
      */
     public function installLivewireStack()
     {
+
+        $stup = __DIR__."/../../stubs/livewire";
         
         $this->components->info('Start install Blade stack ');
         $this->components->info('Start install required composer packages ');
@@ -39,34 +41,36 @@ trait InstallLivewireStack
             ] + $packages;
         });
         $this->components->info('Start Extracting files .... ');
+        (new Filesystem)->ensureDirectoryExists(app_path('Livewire'));
+        (new Filesystem)->copyDirectory($stup.'/app/Livewire/Profile' ,app_path('Livewire/Profile'));
         //images
-        (new Filesystem)->copyDirectory( InstallLivewireStack::STUBS  .'/public/images' , base_path('public/images'));
+        (new Filesystem)->copyDirectory( $stup  .'/public/images' , base_path('public/images'));
         // Requests
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Requests'));
-        (new Filesystem)->copyDirectory(InstallLivewireStack::STUBS . "/app/Http/Requests",app_path('Http/Requests'));
+        (new Filesystem)->copyDirectory($stup . "/app/Http/Requests",app_path('Http/Requests'));
 
         // Controllers...
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Controllers'));
-        (new Filesystem)->copyDirectory(InstallLivewireStack::STUBS .'/app/Http/Controllers', app_path('Http/Controllers'));
+        (new Filesystem)->copyDirectory($stup .'/app/Http/Controllers', app_path('Http/Controllers'));
 
         // Views...
         (new Filesystem)->ensureDirectoryExists(resource_path('views'));
-        (new Filesystem)->copyDirectory(InstallLivewireStack::STUBS .'/resources/views', resource_path('views'));
+        (new Filesystem)->copyDirectory($stup .'/resources/views', resource_path('views'));
 
         // Components...
         (new Filesystem)->ensureDirectoryExists(app_path('View/Components'));
-        (new Filesystem)->copyDirectory(InstallLivewireStack::STUBS .'/app/View/Components', app_path('View/Components'));
+        (new Filesystem)->copyDirectory($stup .'/app/View/Components', app_path('View/Components'));
 
         // Routes...
-        copy(InstallLivewireStack::STUBS .'/routes/web.php', base_path('routes/web.php'));
-        (new Filesystem)->copyDirectory(InstallLivewireStack::STUBS .'/routes/web', base_path('routes/web'));
+        copy($stup .'/routes/web.php', base_path('routes/web.php'));
+        (new Filesystem)->copyDirectory($stup .'/routes/web', base_path('routes/web'));
 
         // Tailwind / Vite...
-        copy(InstallLivewireStack::STUBS .'/tailwind.config.js', base_path('tailwind.config.js'));
-        copy(InstallLivewireStack::STUBS .'/postcss.config.js', base_path('postcss.config.js'));
-        copy(InstallLivewireStack::STUBS .'/vite.config.js', base_path('vite.config.js'));
-        copy(InstallLivewireStack::STUBS .'/resources/css/app.css', resource_path('css/app.css'));
-        copy(InstallLivewireStack::STUBS .'/resources/js/app.js', resource_path('js/app.js'));
+        copy($stup .'/tailwind.config.js', base_path('tailwind.config.js'));
+        copy($stup .'/postcss.config.js', base_path('postcss.config.js'));
+        copy($stup .'/vite.config.js', base_path('vite.config.js'));
+        copy($stup .'/resources/css/app.css', resource_path('css/app.css'));
+        copy($stup .'/resources/js/app.js', resource_path('js/app.js'));
 
 
         $this->components->info('End Extracting files  ');
