@@ -1,28 +1,30 @@
-<?php 
+<?php
 
 namespace Mekadalibrahem\Toolkit\Console ;
 
+use Exception;
 use Illuminate\Console\Command ;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-
+use Illuminate\Support\Str;
 use function Laravel\Prompts\select;
 
 class InstallCommand extends Command  implements PromptsForMissingInput
 {
-    use InstallAbstractStack ; use InstallBladeStack ;
+    use InstallAbstractStack ; use InstallBladeStack ; 
+    use InstallLivewireStack;
 
 
-    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade)}
+    protected $signature = "toolkit:install {stack : The development stack that should be installed (abstract , blade , livewire)}
                     {--composer=global : Absolute path to the Composer binary which should be used to install packages}'";
-    
+
 
     protected $description = "Install the Tool kit package" ;
 
-    public function handle() 
+    public function handle()
     {
         $this->info('start install tool kit ');
         if ($this->argument('stack') === 'abstract') {
@@ -31,8 +33,11 @@ class InstallCommand extends Command  implements PromptsForMissingInput
         if ($this->argument('stack') === 'blade'){
             return $this->installBladeStack();
         }
+        if($this->argument('stack') === 'livewire'){
+            return $this->installLivewireStack() ;
+        }
         $this->components->error('Invalid stack. Supported stacks are [abstract , blade]');
-        
+
         return 1;
     }
 
@@ -141,14 +146,15 @@ class InstallCommand extends Command  implements PromptsForMissingInput
                 label: 'Which toolkit stack would you like to install?',
                 options: [
                     'abstract' => 'abstract... provide controllers , requests and other without front end sections or routes' ,
-                    'blade' => 'blade... provide controllers .. Route , views (tailwindcss and flowbit lib ) sampile GUI'
+                    'blade' => 'blade... provide controllers .. Route , views (tailwindcss and flowbit lib ) sampile GUI' ,
+                    'livewire' => 'livewire ... provide controller ... Route , view  and livewire components'
                 ],
-                scroll: 2,
+                scroll: 3,
             ),
         ];
     }
 
-    
+
     /**
      * Update the "package.json" file.
      *
@@ -227,6 +233,56 @@ class InstallCommand extends Command  implements PromptsForMissingInput
     protected function phpBinary()
     {
         return (new PhpExecutableFinder())->find(false) ?: 'php';
+    }
+
+
+    /**
+     * Install the service provider in the application configuration file.
+     *
+     * @param  string  $after
+     * @param  string  $name
+     * @return void
+     */
+    protected function installServiceProviderAfter($after, $name)
+    {
+        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\'.$name.'::class')) {
+            file_put_contents(config_path('app.php'), str_replace(
+                'App\\Providers\\'.$after.'::class,',
+                'App\\Providers\\'.$after.'::class,'.PHP_EOL.'        '.$name.'::class,',
+                $appConfig
+            ));
+        }
+    }
+
+       /**
+     * Configure the session driver for Jetstream.
+     *
+     * @return void
+     */
+    protected function configureSession()
+    {
+        try {
+            $this->call('session:table');
+        } catch (Exception $e) {
+            //
+        }
+
+        $this->replaceInFile("'SESSION_DRIVER', 'file'", "'SESSION_DRIVER', 'database'", config_path('session.php'));
+        $this->replaceInFile('SESSION_DRIVER=file', 'SESSION_DRIVER=database', base_path('.env'));
+        $this->replaceInFile('SESSION_DRIVER=file', 'SESSION_DRIVER=database', base_path('.env.example'));
+    }
+
+     /**
+     * Replace a given string within a given file.
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $path
+     * @return void
+     */
+    protected function replaceInFile($search, $replace, $path)
+    {
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
 
