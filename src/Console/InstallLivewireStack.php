@@ -19,7 +19,7 @@ trait InstallLivewireStack
         
         $this->components->info('Start install Blade stack ');
         $this->components->info('Start install required composer packages ');
-        $this->requireComposerPackages(["jenssegers/agent:^2.6"]);
+        $this->requireComposerPackages(["jenssegers/agent:^2.6" ,"livewire/livewire:^3.4"]);
         $this->components->info('End install required composer packages ');
 
 
